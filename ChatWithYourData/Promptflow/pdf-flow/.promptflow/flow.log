@@ -1,0 +1,284 @@
+2023-09-24 11:03:24 +0800   25411 execution          INFO     Start to run 2 nodes with concurrency level 16.
+2023-09-24 11:03:24 +0800   25411 execution.flow     INFO     Executing node read_pdf. node run id: 2745e7c4-5a87-4fa9-810d-ee655e2d9fd8_read_pdf_0
+2023-09-24 11:03:24 +0800   25411 execution.flow     INFO     Node read_pdf completes.
+2023-09-24 11:03:24 +0800   25411 execution.flow     INFO     Executing node llm_read. node run id: 2745e7c4-5a87-4fa9-810d-ee655e2d9fd8_llm_read_0
+2023-09-24 11:03:24 +0800   25411 execution          ERROR    Node llm_read in line 0 failed. Exception: The Chat API requires a specific format for prompt definition, and the prompt should include separate lines as role delimiters: 'assistant:\n','system:\n','function:\n','user:\n'. Current parsed role '你是一名老师，需要根据书本内容，准备 ppt 课件。
+
+根据以下要求提取内容
+
+1.中文数字+、+文字 为知识大点，作为独立一页输出
+2. (+中文数字+) 为子知识点,把子知识点后的相关内容按照段落划分，每一段总结成不超过20字的句子后和子知识点一起作为独立一页输出
+
+
+如：
+
+输入：
+一、abc
+(一) xxxxx  abcdddd
+................
+
+输出：
+
+[知识点]一、abc
+----------------
+[标题](一) xxxxx
+
+.......
+
+----------------
+
+
+输入：
+
+根据以下条件从输入提取相关内容
+
+条件1 第一章xxxx 作为chapter
+条件2 第一节 xxxxx 作为 session name
+
+输入
+第一章 xxxx
+本章学习目标
+◆ ...........
+◆ ...........
+◆ ............
+第一节 xxxxxx
+...................
+一、..........................
+
+输出
+{"chapter":"第一章 xxxx","target":"◆ ...........\n◆ ...........\n◆ ............\n","sessions":[{"name":"第一节 xxxxxx", "content":"一、..........................\n....................\n二、..........................\n"}]}
+
+输入
+abc
+efg
+hij
+
+输出
+{"chapter":"","target":"","sessions":[{"name":"", content:"abcefghij"}]}
+
+
+输入
+.........
+第二节 xxxxxx
+...............
+一、..........................
+
+输出
+{"chapter":"","target":"","sessions":[{"name":"", content:"........."},{"name":"第二节 xxxxxx", content:"一、.........................."}]}
+
+
+
+
+根据以下条件从输入提取相关内容
+
+条件1  以汉字数字+、+xxxx 作为 item ,其他表示方式都不是 item ，如 一、xxxx 作为 item
+条件2  以( + 汉字数字 + ）+ xxxx  作为 catalog name 如 （一）xxxx 作为 catalog name
+条件3  以 •  或者 ✓  开始的都不是 item 或 catalog name，只能作为 content 输出
+
+
+
+输入
+一、xxxx
+ （一）aaa
+   .................
+
+输出
+{"item":"一、xxxx","catalogs":[{"name":"（一）aaa", "content":"................."}]}
+
+输入
+
+...........
+三、xxxx
+ （一）aaa
+   ....
+
+输出
+[{"item":"","catalogs":[{"name":"", "content":"..........."}]},{"item":"三、xxxx":[{"name":"（一）aaa", "content":" ...."}]}]
+
+输入
+..........
+（一）aaa
+..........
+
+输出
+{"item":"","catalogs":[{"name":"（一）aaa", "content":".........."}]}
+
+
+输入
+一、xxxxx
+.............
+
+输出
+{"item":"一、xxxxx","catalogs":[{"name":"", "content":".........."}]}
+
+输入
+aaa
+bbb
+一、xxxxx
+.............
+
+输出
+[{"item":"","catalogs":[{"name":"", "content":"aaa\nbbb"}]},{"item":"一、xxxxx","catalogs":[{"name":"", "content":"............."}]}]
+
+输入
+.....
+.....
+....
+
+输出
+[{"item":"","catalogs":[{"name":"", "content":"............."}]}]
+
+输入 hello ./docs/chapter01.pdf
+
+请根据输入  hello ./docs/chapter01.pdf , 帮我提取出里面的内容
+
+输出' does not meet the requirement. If you intend to use the Completion API, please select the appropriate API type and deployment name. If you do intend to use the Chat API, please refer to the guideline at https://aka.ms/pfdoc/chat-prompt or view the samples in our gallery that contain 'Chat' in the name..
+Traceback (most recent call last):
+  File "/Users/lokinfey/miniforge3/envs/pydev/lib/python3.10/site-packages/promptflow/_core/flow_execution_context.py", line 126, in invoke_tool_with_cache
+    result = self.invoke_tool(f, args, kwargs)
+  File "/Users/lokinfey/miniforge3/envs/pydev/lib/python3.10/site-packages/promptflow/_core/flow_execution_context.py", line 170, in invoke_tool
+    raise e
+  File "/Users/lokinfey/miniforge3/envs/pydev/lib/python3.10/site-packages/promptflow/_core/flow_execution_context.py", line 164, in invoke_tool
+    return f(*args, **kwargs)
+  File "/Users/lokinfey/miniforge3/envs/pydev/lib/python3.10/site-packages/promptflow/tools/common.py", line 138, in wrapper
+    raise e
+  File "/Users/lokinfey/miniforge3/envs/pydev/lib/python3.10/site-packages/promptflow/tools/common.py", line 135, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/lokinfey/miniforge3/envs/pydev/lib/python3.10/site-packages/promptflow/tools/aoai.py", line 121, in chat
+    messages = parse_chat(chat_str)
+  File "/Users/lokinfey/miniforge3/envs/pydev/lib/python3.10/site-packages/promptflow/tools/common.py", line 114, in parse_chat
+    validate_role(role)
+  File "/Users/lokinfey/miniforge3/envs/pydev/lib/python3.10/site-packages/promptflow/tools/common.py", line 26, in validate_role
+    raise ChatAPIInvalidRole(message=error_message)
+promptflow.tools.exception.ChatAPIInvalidRole: The Chat API requires a specific format for prompt definition, and the prompt should include separate lines as role delimiters: 'assistant:\n','system:\n','function:\n','user:\n'. Current parsed role '你是一名老师，需要根据书本内容，准备 ppt 课件。
+
+根据以下要求提取内容
+
+1.中文数字+、+文字 为知识大点，作为独立一页输出
+2. (+中文数字+) 为子知识点,把子知识点后的相关内容按照段落划分，每一段总结成不超过20字的句子后和子知识点一起作为独立一页输出
+
+
+如：
+
+输入：
+一、abc
+(一) xxxxx  abcdddd
+................
+
+输出：
+
+[知识点]一、abc
+----------------
+[标题](一) xxxxx
+
+.......
+
+----------------
+
+
+输入：
+
+根据以下条件从输入提取相关内容
+
+条件1 第一章xxxx 作为chapter
+条件2 第一节 xxxxx 作为 session name
+
+输入
+第一章 xxxx
+本章学习目标
+◆ ...........
+◆ ...........
+◆ ............
+第一节 xxxxxx
+...................
+一、..........................
+
+输出
+{"chapter":"第一章 xxxx","target":"◆ ...........\n◆ ...........\n◆ ............\n","sessions":[{"name":"第一节 xxxxxx", "content":"一、..........................\n....................\n二、..........................\n"}]}
+
+输入
+abc
+efg
+hij
+
+输出
+{"chapter":"","target":"","sessions":[{"name":"", content:"abcefghij"}]}
+
+
+输入
+.........
+第二节 xxxxxx
+...............
+一、..........................
+
+输出
+{"chapter":"","target":"","sessions":[{"name":"", content:"........."},{"name":"第二节 xxxxxx", content:"一、.........................."}]}
+
+
+
+
+根据以下条件从输入提取相关内容
+
+条件1  以汉字数字+、+xxxx 作为 item ,其他表示方式都不是 item ，如 一、xxxx 作为 item
+条件2  以( + 汉字数字 + ）+ xxxx  作为 catalog name 如 （一）xxxx 作为 catalog name
+条件3  以 •  或者 ✓  开始的都不是 item 或 catalog name，只能作为 content 输出
+
+
+
+输入
+一、xxxx
+ （一）aaa
+   .................
+
+输出
+{"item":"一、xxxx","catalogs":[{"name":"（一）aaa", "content":"................."}]}
+
+输入
+
+...........
+三、xxxx
+ （一）aaa
+   ....
+
+输出
+[{"item":"","catalogs":[{"name":"", "content":"..........."}]},{"item":"三、xxxx":[{"name":"（一）aaa", "content":" ...."}]}]
+
+输入
+..........
+（一）aaa
+..........
+
+输出
+{"item":"","catalogs":[{"name":"（一）aaa", "content":".........."}]}
+
+
+输入
+一、xxxxx
+.............
+
+输出
+{"item":"一、xxxxx","catalogs":[{"name":"", "content":".........."}]}
+
+输入
+aaa
+bbb
+一、xxxxx
+.............
+
+输出
+[{"item":"","catalogs":[{"name":"", "content":"aaa\nbbb"}]},{"item":"一、xxxxx","catalogs":[{"name":"", "content":"............."}]}]
+
+输入
+.....
+.....
+....
+
+输出
+[{"item":"","catalogs":[{"name":"", "content":"............."}]}]
+
+输入 hello ./docs/chapter01.pdf
+
+请根据输入  hello ./docs/chapter01.pdf , 帮我提取出里面的内容
+
+输出' does not meet the requirement. If you intend to use the Completion API, please select the appropriate API type and deployment name. If you do intend to use the Chat API, please refer to the guideline at https://aka.ms/pfdoc/chat-prompt or view the samples in our gallery that contain 'Chat' in the name.
+2023-09-24 11:03:24 +0800   25411 execution          ERROR    One node execution failed, cancel all running tasks. llm_read.

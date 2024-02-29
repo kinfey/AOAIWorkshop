@@ -1,0 +1,35 @@
+id: template_chat_flow
+name: Template Chat Flow
+environment:
+  python_requirements_txt: requirements.txt
+inputs:
+  chat_history:
+    type: list
+  question:
+    type: string
+    is_chat_input: true
+    default: ./docs/Chapter01.pdf
+outputs:
+  answer:
+    type: string
+    reference: ${llm_read.output}
+    is_chat_output: true
+nodes:
+- name: read_pdf
+  type: python
+  source:
+    type: code
+    path: read_pdf.py
+  inputs:
+    input1: ${inputs.question}
+- name: llm_read
+  type: llm
+  source:
+    type: code
+    path: llm_read.jinja2
+  inputs:
+    deployment_name: GPTModel
+    max_tokens: 13000
+    content: ${read_pdf.output}
+  connection: AzureOpenAIConn
+  api: chat

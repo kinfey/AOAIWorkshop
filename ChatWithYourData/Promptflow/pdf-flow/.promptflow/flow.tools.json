@@ -1,0 +1,45 @@
+{
+  "package": {},
+  "code": {
+    "chat.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "question": {
+          "type": [
+            "string"
+          ]
+        },
+        "chat_history": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "description": "Chat with Chatbot",
+      "is_builtin": false
+    },
+    "read_pdf.py": {
+      "type": "python",
+      "inputs": {
+        "input1": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "read_pdf.py",
+      "function": "read_pdf"
+    },
+    "llm_read.jinja2": {
+      "type": "llm",
+      "inputs": {
+        "content": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "llm_read.jinja2"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "nodeLayouts": {
+    "inputs": {
+      "x": 290,
+      "y": 42,
+      "index": -1
+    },
+    "outputs": {
+      "x": 220,
+      "y": 444,
+      "index": -1
+    },
+    "read_pdf": {
+      "x": 140,
+      "y": 176,
+      "index": 0
+    },
+    "llm_read": {
+      "x": 140,
+      "y": 310,
+      "index": 1
+    }
+  },
+  "orientation": "Vertical"
+}
