@@ -59,7 +59,7 @@ Prompt flow 是一套开发工具，旨在简化基于 LLM 的人工智能应用
 
 （可选但强烈推荐）利用 Azure AI 中的云版本提示流与您的团队协作。
 
-[[访问链接](./ChatWithYourData/Promptflow/)
+[访问链接](./ChatWithYourData/Promptflow/)
 
 
 **4. Fabric**
